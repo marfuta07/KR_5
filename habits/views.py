@@ -12,6 +12,9 @@ class HabitViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsOwner]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Habit.objects.none()   # ← для генерации схемы
+
         user = self.request.user
         if self.action in ['list', 'retrieve']:
             return Habit.objects.filter(
