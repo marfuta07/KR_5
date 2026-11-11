@@ -173,3 +173,4 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 # Email (консольный backend)
 DEFAULT_FROM_EMAIL = 'noreply@habit-tracker.local'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '')
