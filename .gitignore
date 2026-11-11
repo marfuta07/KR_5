@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+/media/
+/staticfiles/
+
+# Окружение
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+
+# .env (секреты)
+.env
+
+# Coverage
+.coverage
+htmlcov/
