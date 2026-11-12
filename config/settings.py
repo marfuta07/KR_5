@@ -164,7 +164,7 @@ REDIS_DB = os.getenv('REDIS_DB', '0')
 CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
 CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
 CELERY_TIMEZONE = 'Europe/Moscow'
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BEAT_SCHEDULER = 'celery.beat.PersistentScheduler'
 CELERY_WORKER_POOL = 'solo'
 
 CELERY_TASK_TRACK_STARTED = True
@@ -174,3 +174,12 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 DEFAULT_FROM_EMAIL = 'noreply@habit-tracker.local'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '')
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'send-habit-reminders': {
+        'task': 'habits.tasks.send_habit_reminders',
+        'schedule': crontab(minute='*'),   # каждую минуту (для теста)
+    },
+}
