@@ -8,30 +8,27 @@ from .models import Habit
 
 @shared_task
 def send_telegram_message(chat_id: int, text: str):
-    """Отправляет сообщение в Telegram (с фолбэком в консоль при блокировке)."""
+    """Отправляет сообщение в Telegram (GET-запрос по совету Алексея)."""
     token = settings.TELEGRAM_BOT_TOKEN
     if not token:
         print(f"[TELEGRAM MOCK] Токен не задан. Сообщение для {chat_id}: {text}")
         return f'Sent to {chat_id} (mock)'
 
     url = f'https://api.telegram.org/bot{token}/sendMessage'
+    params = {'chat_id': chat_id, 'text': text}
 
     try:
-        # Пытаемся отправить реальное сообщение (с коротким таймаутом)
-        response = requests.post(
-            url,
-            json={'chat_id': chat_id, 'text': text},
-            timeout=3,
-        )
-        if response.status_code == 200:
+        # Используем GET и увеличенный таймаут (15 сек)
+        response = requests.get(url, params=params, timeout=15)
+        data = response.json()
+
+        if data.get('ok'):
             return f'Sent to {chat_id}'
-
-        # Если Telegram вернул ошибку
-        print(f"[TELEGRAM ERROR] {response.status_code}: {response.text}")
-        return f'Error: {response.status_code}'
-
+        else:
+            print(f"[TELEGRAM ERROR] {data}")
+            return f'Error: {data}'
     except Exception as e:
-        # Если сеть блокирует соединение, выводим в консоль (мок)
+        # Если сеть блокирует — выводим в консоль (мок)
         print(f"[TELEGRAM MOCK] Сеть недоступна. Сообщение для {chat_id}: {text}")
         print(f"[TELEGRAM MOCK] Ошибка: {e}")
         return f'Sent to {chat_id} (mock)'
