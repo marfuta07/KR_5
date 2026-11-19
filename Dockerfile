@@ -24,8 +24,7 @@ RUN pip install --no-cache-dir poetry && \
 # Копируем остальной проект
 COPY . .
 
-# Собираем статику
-RUN python manage.py collectstatic --noinput
+
 
 # Команда запуска по умолчанию (Gunicorn)
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
